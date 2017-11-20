@@ -114,10 +114,11 @@ class StarsExplManager(Manager):
 
     def _createHelp(self):
         help = []
+        help.append('" <F1> : toggle this help')
+        help.append('" <F5> : refresh the cache')
         help.append('" <CR>/<double-click>/o : open repo in browser')
         help.append('" i : switch to input mode')
         help.append('" q : quit')
-        help.append('" <F1> : toggle this help')
         help.append(
             '" ---------------------------------------------------------')
         return help

@@ -10,6 +10,7 @@ exec g:Lf_py "from starsExpl import *"
 function! leaderf#Stars#Maps()
     nmapclear <buffer>
     nnoremap <buffer> <silent> <F1>          :exec g:Lf_py "starsExplManager.toggleHelp()"<CR>
+    nnoremap <buffer> <silent> <F5>          :exec g:Lf_py "starsExplManager.refresh()"<CR>
     nnoremap <buffer> <silent> o             :exec g:Lf_py "starsExplManager.accept()"<CR>
     nnoremap <buffer> <silent> <2-LeftMouse> :exec g:Lf_py "starsExplManager.accept()"<CR>
     nnoremap <buffer> <silent> q             :exec g:Lf_py "starsExplManager.quit()"<CR>
