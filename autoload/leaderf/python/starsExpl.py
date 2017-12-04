@@ -46,9 +46,9 @@ class StarsExplorer(Explorer):
         else:
             self._repo_list = []
 
-            with open(cache_file, 'r') as f:
+            with open(cache_file, 'rb') as f:
                 for line in f.readlines():
-                    self._repo_list.append(parseLine(line))
+                    self._repo_list.append(parseLine(line.decode('utf-8')))
             return self._repo_list
 
     def getFreshContent(self, *args, **kwargs):
@@ -100,7 +100,7 @@ class StarsExplManager(Manager):
         if len(args) == 0:
             return
         line = args[0]
-        repo = line.split('\t')[0]
+        repo = line.split(' ')[0]
         url = "https://github.com/%s" % repo
         lfCmd("call leaderf#Stars#open('%s')" % url)
 
