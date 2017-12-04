@@ -19,7 +19,7 @@ cache_dir = os.path.normpath(cache_dir)
 cache_file = os.path.join(cache_dir, 'starred_repos')
 username = vim.vars['gs#username'].decode()
 maxline = vim.vars.get('gs#maxline') or 100
-
+gap = 4
 
 def parseLines(lines):
     ret = []
@@ -27,10 +27,11 @@ def parseLines(lines):
     longest_name = max(repos, key=lambda repo: wcswidth(repo[0]))[0]
     max_name_len = wcswidth(longest_name)
     for name, desc in repos:
-        desc_len = maxline - 5 - max_name_len
+        desc_len = maxline - gap - max_name_len
         if desc_len > 0:
-            ret.append(name + (
-                maxline - wcswidth(name) - desc_len) * ' ' + desc[:desc_len])
+            if wcswidth(desc[:desc_len]) > desc_len:
+                desc_len = round(desc_len / (wcswidth(desc[:desc_len]) / desc_len))
+            ret.append(name + (max_name_len + gap - wcswidth(name)) * ' ' + desc[:desc_len])
         else:
             ret.append(name)
     lfCmd("echom %r" % len(repos))
