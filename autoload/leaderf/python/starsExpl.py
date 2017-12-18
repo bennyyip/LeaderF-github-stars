@@ -17,7 +17,10 @@ cache_dir = os.path.join(
     'github_stars')
 cache_dir = os.path.normpath(cache_dir)
 cache_file = os.path.join(cache_dir, 'starred_repos')
-username = vim.vars['gs#username'].decode()
+if lfEval("has('nvim')") == '1':
+    username = vim.vars['gs#username']
+else:
+    username = vim.vars['gs#username'].decode()
 maxline = vim.vars.get('gs#maxline') or 100
 gap = 4
 
