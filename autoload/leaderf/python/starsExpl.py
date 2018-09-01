@@ -58,7 +58,7 @@ class StarsExplorer(Explorer):
     def __init__(self):
         self._repo_list = []
         if not os.path.exists(cache_dir):
-            os.makedirs(self.cache_dir)
+            os.makedirs(cache_dir)
 
     def getContent(self, *args, **kwargs):
         if not os.path.exists(cache_file):
