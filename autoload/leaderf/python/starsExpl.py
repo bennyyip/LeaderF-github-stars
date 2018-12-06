@@ -9,7 +9,7 @@ from leaderf.explorer import *
 from leaderf.manager import *
 
 from wcwidth import wcswidth
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 import json
 
 cache_dir = os.path.join(
@@ -17,31 +17,43 @@ cache_dir = os.path.join(
     'github_stars')
 cache_dir = os.path.normpath(cache_dir)
 cache_file = os.path.join(cache_dir, 'starred_repos')
-if lfEval("has('nvim')") == '1':
-    username = vim.vars['gs#username']
-else:
-    username = vim.vars['gs#username'].decode()
-maxline = vim.vars.get('gs#maxline') or 100
 gap = 4
 
-def parseLines(lines):
+
+def get_var(name):
+    r = vim.vars.get(name)
+    if isinstance(r, bytes):
+        return r.decode()
+    else:
+        return r
+
+
+username = get_var('gs#username')
+assert username is not None
+github_token = get_var('gs#github_token')
+maxline = get_var('gs#maxline') or 100
+
+
+def parse_lines(lines):
     ret = []
-    repos = [(parseLine(line)) for line in lines.split('\n')]
+    repos = [(parse_line(line)) for line in lines.split('\n')]
     longest_name = max(repos, key=lambda repo: wcswidth(repo[0]))[0]
     max_name_len = wcswidth(longest_name)
     for name, desc in repos:
         desc_len = maxline - gap - max_name_len
         if desc_len > 0:
             if wcswidth(desc[:desc_len]) > desc_len:
-                desc_len = round(desc_len / (wcswidth(desc[:desc_len]) / desc_len))
-            ret.append(name + (max_name_len + gap - wcswidth(name)) * ' ' + desc[:desc_len])
+                desc_len = round(
+                    desc_len / (wcswidth(desc[:desc_len]) / desc_len))
+            ret.append(name + (max_name_len + gap - wcswidth(name)) * ' ' +
+                       desc[:desc_len])
         else:
             ret.append(name)
-    lfCmd("echom %r" % len(repos))
+    # lfCmd("echom %r" % len(repos))
     return ret
 
 
-def parseLine(line):
+def parse_line(line):
     line = line.rstrip()
     name, sep, desc = line.partition(" ")
     return (name, desc)
@@ -69,9 +81,7 @@ class StarsExplorer(Explorer):
             self._repo_list = []
 
             with open(cache_file, 'rb') as f:
-                self._repo_list = parseLines(f.read().decode('utf-8'))
-                # for line in f.readlines():
-                #     self._repo_list.append(parseLine(line.decode('utf-8')))
+                self._repo_list = parse_lines(f.read().decode('utf-8'))
             return self._repo_list
 
     def getFreshContent(self, *args, **kwargs):
@@ -81,18 +91,24 @@ class StarsExplorer(Explorer):
             page = 0
             while True:
                 page += 1
+
                 url = "https://api.github.com/users/%s/starred?per_page=100&page=%d" % (
                     username, page)
-                resp = urlopen(url)
+                req = Request(url)
+                if github_token is not None:
+                    req.add_header('Authorization', 'token %s' % github_token)
+                resp = urlopen(req)
+
                 starred_repos = json.load(resp)
                 if len(starred_repos) == 0:
                     break
-                for repo in starred_repos:
-                    line = ("%s %s\n" % (repo['full_name'], ""
-                                         if repo['description'] is None else
-                                         repo['description']))
-                    f.write(line.encode('utf-8'))
-                    self._repo_list.append(parseLine(line))
+                lines = '\n'.join(
+                    [("%s %s" % (repo['full_name'], "" if repo['description']
+                                 is None else repo['description']))
+                     for repo in starred_repos])
+                f.write(lines.encode('utf-8'))
+                self._repo_list = parse_lines(lines)
+
         return self._repo_list
 
     def getStlCategory(self):
