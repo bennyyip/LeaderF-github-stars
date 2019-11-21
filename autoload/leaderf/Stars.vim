@@ -76,3 +76,12 @@ function! leaderf#Stars#open(filename) abort
     throw 'Not supported.'
   endif
 endfunction
+
+
+
+function! leaderf#Stars#register(name)
+exec g:Lf_py "<< EOF"
+from leaderf.anyExpl import anyHub
+anyHub.addPythonExtension(vim.eval("a:name"), starsExplManager)
+EOF
+endfunction
