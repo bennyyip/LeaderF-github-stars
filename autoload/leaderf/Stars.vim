@@ -2,6 +2,11 @@ if leaderf#versionCheck() == 0
     finish
 endif
 
+let g:leaderf_github_stars_username = get(
+      \g:, 'leaderf_github_stars_username',
+      \ executable('git') ? system('git config --global user.name') : expand('$USER'))
+
+
 exec g:Lf_py "import vim, sys, os.path"
 exec g:Lf_py "cwd = vim.eval('expand(\"<sfile>:p:h\")')"
 exec g:Lf_py "sys.path.insert(0, os.path.join(cwd, 'python'))"
@@ -79,9 +84,11 @@ endfunction
 
 
 
-function! leaderf#Stars#register(name)
-exec g:Lf_py "<< EOF"
-from leaderf.anyExpl import anyHub
-anyHub.addPythonExtension(vim.eval("a:name"), starsExplManager)
-EOF
+function! leaderf#Stars#managerId()
+    " pyxeval() has bug
+    if g:Lf_PythonVersion == 2
+        return pyeval("id(starsExplManager)")
+    else
+        return py3eval("id(starsExplManager)")
+    endif
 endfunction
