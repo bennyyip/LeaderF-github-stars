@@ -1,6 +1,6 @@
 # LeaderF-github-stars
 
-This Plugin use LeaderF to navigate to a repository that you stared on GitHub.
+This Plugin use LeaderF to navigate to a repository that you starred on GitHub.
 
 # Requirements
 
