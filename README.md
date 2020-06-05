@@ -11,11 +11,14 @@ This Plugin use LeaderF to navigate to a repository that you stared on GitHub.
 
 Place following line in your vim config:
 ```Vim
-let gs#username='your github username'
+let g:leaderf_github_stars_username='your github username'
 " Max length of line, default is 100.
 " If maxline is less than the longest repository name, only the repository name is shown.
 " So you may set it to 0 to disable description.
-let gs#maxline=80
+let g:leaderf_github_stars_maxline=80
+
+" Optional. Higher rate limit when using token
+let g:leaderf_github_stars_maxline = 'your github token'
 ```
 Try:
 ```Vim
