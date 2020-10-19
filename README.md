@@ -18,7 +18,7 @@ let g:leaderf_github_stars_username='your github username'
 let g:leaderf_github_stars_maxline=80
 
 " Optional. Higher rate limit when using token
-let g:leaderf_github_stars_maxline = 'your github token'
+let g:leaderf_github_stars_github_token = 'your github token'
 ```
 Try:
 ```Vim

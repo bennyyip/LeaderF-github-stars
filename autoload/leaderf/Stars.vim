@@ -4,7 +4,7 @@ endif
 
 let g:leaderf_github_stars_username = get(
       \g:, 'leaderf_github_stars_username',
-      \ executable('git') ? system('git config --global user.name') : expand('$USER'))
+      \ executable('git') ? trim(system('git config --global user.name')) : expand('$USER'))
 
 
 exec g:Lf_py "import vim, sys, os.path"
